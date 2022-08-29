@@ -1,0 +1,33 @@
+{
+    "functions": [
+        ["specbleach_initialize", "number", ["number"]],
+        ["specbleach_free", "void", ["number"]],
+        ["specbleach_malloc_parameters_js", "number", []],
+        ["specbleach_free_parameters_js", "void", ["number"]],
+        ["specbleach_load_parameters_js", "number", ["number", "number"]],
+        ["specbleach_process", "number", ["number", "number", "number", "number"]],
+        ["specbleach_get_latency", "number", ["number"]],
+        ["specbleach_get_noise_profile_size", "number", ["number"]],
+        ["specbleach_get_noise_profile", "number", ["number"]],
+        ["specbleach_load_noise_profile", "number", ["number", "number", "number", "number"]],
+        ["specbleach_reset_noise_profile", "number", ["number"]],
+        ["specbleach_noise_profile_available", "number", ["number"]],
+        ["specbleach_get_noise_profile_blocks_averaged", "number", ["number"]],
+
+        ["malloc", "number", ["number"]],
+        ["calloc", "number", ["number", "number"]],
+        ["free", "void", ["number"]]
+    ],
+
+    "accessors": [
+        ["SpectralBleachParameters", [
+            "learn_noise",
+            "residual_listen",
+            "reduction_amount",
+            "smoothing_factor",
+            "transient_protection",
+            "whitening_factor",
+            "noise_rescale"
+        ]]
+    ]
+}

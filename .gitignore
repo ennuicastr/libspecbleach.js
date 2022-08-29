@@ -35,6 +35,9 @@
 *.i*86
 *.x86_64
 *.hex
+*.asm.js
+*.wasm.js
+*.wasm
 
 # Debug files
 *.dSYM/
@@ -59,3 +62,11 @@ build/
 
 # Vscode files
 .vscode/
+
+# Emscripten build
+exports.json
+libspecbleach.types.d.ts
+post.js
+
+# Prereqs
+fftw*
