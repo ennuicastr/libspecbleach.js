@@ -84,6 +84,7 @@ async function main(argc, argv) {
 
   // Once done you can free the library instance and the buffers used
   specbleach.adaptive_free(lib_instance);
+  specbleach.free(parameters);
   specbleach.free(input_library_buffer);
   specbleach.free(output_library_buffer);
 }

@@ -46,10 +46,6 @@ SpectralBleachParameters *specbleach_malloc_parameters_js() {
     return ret;
 }
 
-void specbleach_free_parameters_js(SpectralBleachParameters *a) {
-    free(a);
-}
-
 bool specbleach_load_parameters_js(SpectralBleachHandle instance,
                                    SpectralBleachParameters *parameters) {
     return specbleach_load_parameters(instance, *parameters);
