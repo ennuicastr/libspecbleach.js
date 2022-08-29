@@ -14,7 +14,7 @@ EFLAGS=\
 CFLAGS=-Oz
 
 OBJS=\
-	bindings.o \
+	bindings.o abindings.o \
 	src/shared/utils/general_utils.o \
 	src/shared/utils/denoise_mixer.o \
 	src/shared/utils/spectral_features.o \

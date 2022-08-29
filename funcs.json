@@ -14,6 +14,14 @@
         ["specbleach_noise_profile_available", "number", ["number"]],
         ["specbleach_get_noise_profile_blocks_averaged", "number", ["number"]],
 
+        ["specbleach_adaptive_initialize", "number", ["number"]],
+        ["specbleach_adaptive_free", "void", ["number"]],
+        ["specbleach_adaptive_malloc_parameters_js", "number", []],
+        ["specbleach_adaptive_free_parameters_js", "void", ["number"]],
+        ["specbleach_adaptive_load_parameters_js", "number", ["number", "number"]],
+        ["specbleach_adaptive_get_latency", "number", ["number"]],
+        ["specbleach_adaptive_process", "number", ["number", "number", "number", "number"]],
+
         ["malloc", "number", ["number"]],
         ["calloc", "number", ["number", "number"]],
         ["free", "void", ["number"]]
@@ -27,6 +35,12 @@
             "smoothing_factor",
             "transient_protection",
             "whitening_factor",
+            "noise_rescale"
+        ]],
+        ["AdaptiveSpectralBleachParameters", [
+            "residual_listen",
+            "reduction_amount",
+            "smoothing_factor",
             "noise_rescale"
         ]]
     ]
