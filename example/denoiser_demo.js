@@ -47,7 +47,7 @@ async function main(argc, argv) {
   const input_file_name = argv[1];
   const output_file_name = argv[2];
 
-  const input_file = new Float32Array(fs.readFileSync(input_file_name));
+  const input_file = new Float32Array(fs.readFileSync(input_file_name).buffer);
   let input_file_idx = 0;
   const output_file = fs.createWriteStream(output_file_name);
 
@@ -70,6 +70,7 @@ async function main(argc, argv) {
   // example
   const parameters = specbleach.malloc_parameters_js();
   specbleach.SpectralBleachParameters_learn_noise_s(parameters, 3);
+  specbleach.SpectralBleachParameters_noise_rescale_s(parameters, 30);
 
   // Load the parameters before doing the denoising or profile learning. This
   // can be done during an audio loop. It's RT safe
@@ -78,10 +79,10 @@ async function main(argc, argv) {
   // Iterate over some frames (NOISE_FRAMES) at the beginning of the audio to
   // capture the noise profile
   for (let i = 0; i < NOISE_FRAMES; i++) {
-
     input_library_buffer.set(
       input_file.subarray(input_file_idx, input_file_idx + BLOCK_SIZE));
     input_file_idx += BLOCK_SIZE;
+
     // Call to the audio process. Needs to know the number of samples to
     // receive.
     specbleach.process(lib_instance, BLOCK_SIZE, input_library_buffer_ptr,
@@ -107,7 +108,7 @@ async function main(argc, argv) {
     specbleach.process(lib_instance, BLOCK_SIZE, input_library_buffer_ptr,
                        output_library_buffer_ptr);
 
-    output_file.write(Buffer.from(output_library_buffer));
+    output_file.write(Buffer.from(output_library_buffer.slice(0).buffer));
   }
 
   // Once done you can free the library instance and the buffers used
