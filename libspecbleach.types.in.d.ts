@@ -13,10 +13,116 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * The main LibSpecBleach interface, returned as a promise from
+ * LibSpecBleach().
+ */
 export interface LibSpecBleach {
 @FUNCS
 @DECLS
 
-    /* Allocate an F32 array. Returns [pointer, ArrayBuffer view] */
-    calloc: (nmemb: number) => [number, Float32Array];
+    /**
+     * Allocate an OO interface.
+     * @param params  Parameters to use in the creation of the LibSpecBleachOO
+     *                instance.
+     */
+    SpecBleach: new (params?: LibSpecBleachOOParams) => LibSpecBleachOO;
+
+    /**
+     * Allocate an F32 array. Returns [pointer, Float32Array]
+     * @param nmemb  Size of the array, in floats
+     */
+    calloc_f32: (nmemb: number) => [number, Float32Array];
+}
+
+/**
+ * The OO interface to libspecbleach.js
+ */
+export interface LibSpecBleachOO {
+    /**
+     * Process this block of input
+     * @param input  Input to process
+     */
+    process: (input: Float32Array) => Float32Array;
+
+    /**
+     * Set the learn_noise parameter as specified. This is separated so that
+     * you can easily switch out of learning mode.
+     * @param to  Value to set learn_noise to
+     */
+    set_learn_noise: (to: number) => void;
+
+    /**
+     * Free data. DO NOT USE AFTER CALLING THIS. Allowing the surrounding
+     * module to go out of scope will have the same effect, but if multiple
+     * instances use the same module, this is necessary.
+     */
+    free: () => void;
+
+    /**
+     * Internal pointer to the input buffer.
+     */
+    input_buffer_ptr: number;
+
+    /**
+     * The input buffer. In most circumstances, you don't need to directly use
+     * this.
+     */
+    input_buffer: Float32Array;
+
+    /**
+     * Internal pointer to the output buffer.
+     */
+    output_buffer_ptr: number;
+
+    /**
+     * The output buffer. In most circumstances, you don't need to directly use
+     * this.
+     */
+    output_buffer: Float32Array;
+
+    /**
+     * Sample rate set during initialization.
+     */
+    sample_rate: number;
+
+    /**
+     * Pointer to the instance of the library. You shouldn't need to touch this.
+     */
+    lib_instance: number;
+
+    /**
+     * Pointer to the parameters structure. You can use this to change
+     * parameters other than learn_noise.
+     */
+    parameters: number;
+}
+
+/**
+ * Parameters to the OO interface.
+ */
+export interface LibSpecBleachOOParams {
+    /**
+     * Adaptive mode?
+     */
+    adaptive?: boolean;
+
+    /**
+     * Size (in words) of each block
+     */
+    block_size?: number;
+
+    /**
+     * Sample rate of the input
+     */
+    sample_rate?: number;
+
+    // Parameters directly in SpecBleachParameters:
+    learn_noise?: number;
+    residual_listen?: boolean;
+    reduction_amount?: number;
+    smoothing_factor?: number;
+    transient_protection?: boolean;
+    whitening_factor?: number;
+    noise_rescale?: number;
 }
