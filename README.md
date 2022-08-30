@@ -1,3 +1,33 @@
+NOTE: This is a port of libspecbleach to WebAssembly/JavaScript, not the
+original libspecbleach!
+
+
+libspecbleach.js
+----------------
+Load either `libspecbleach.wasm.js` or `libspecbleach.asm.js`. It exposes a
+global variable `LibSpecBleach`. `LibSpecBleach` is a factory function that
+returns a promise that resolves to an instance of the SpecBleach library.
+
+The result of `LibSpecBleach()` can be used exactly like the C `libspecbleach`
+library. Use `specbleach.calloc_f32(size)` to allocate a `Float32Array` in the
+context of the LibSpecBleach instance; it returns an array with the pointer
+(needed for C function calls) and the `Float32Array`. Make sure to use
+`specbleach.free` to free it when you're done. Otherwise, the library is
+identical to the original libspecbleach, except (a) functions that take
+`SpecBleachParameter`s instead have versions suffixed with `_js` that take
+`SpecBleachParameter *`s, and (b) the `specbleach_` prefix is removed from all
+functions, except for `specbleach_free`.
+
+Alternatively, libspecbleach.js has an object oriented API.
+
+See `examples/denoise_demo.js` and `examples/adenoise_demo.js` for examples of
+the C API. See `examples/denoise_demo_oo.js` and `examples/adenoise_demo_oo.js`
+for examples of the OO API.
+
+The remainder of this document is the original `noise-repellent`'s README, and
+is not JavaScript-specific.
+
+
 # libspecbleach
 
 C library for audio noise reduction and other spectral effects
