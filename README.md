@@ -24,7 +24,7 @@ See `examples/denoise_demo.js` and `examples/adenoise_demo.js` for examples of
 the C API. See `examples/denoise_demo_oo.js` and `examples/adenoise_demo_oo.js`
 for examples of the OO API.
 
-The remainder of this document is the original `noise-repellent`'s README, and
+The remainder of this document is the original libspecbleach's README, and
 is not JavaScript-specific.
 
 
