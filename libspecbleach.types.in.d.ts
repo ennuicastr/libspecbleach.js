@@ -15,7 +15,7 @@
 
 /**
  * The main LibSpecBleach interface, returned as a promise from
- * LibSpecBleach().
+ * LibSpecBleach.LibSpecBleach().
  */
 export interface LibSpecBleach {
 @FUNCS
@@ -33,6 +33,32 @@ export interface LibSpecBleach {
      * @param nmemb  Size of the array, in floats
      */
     calloc_f32: (nmemb: number) => [number, Float32Array];
+}
+
+/**
+ * The LibSpecBleach wrapper, exposed with the name "LibSpecBleach".
+ */
+export interface LibSpecBleachWrapper {
+    /**
+     * URL base from which load modules.
+     */
+    base?: string;
+
+    /**
+     * Set to avoid loading WebAssembly.
+     */
+    nowasm?: boolean;
+
+    /**
+     * Set to avoid loading WebAssembly SIMD.
+     */
+    nosimd?: boolean;
+
+    /**
+     * Create a LibSpecBleach instance.
+     * @param opts  Options
+     */
+    LibSpecBleach(): Promise<LibSpecBleach>;
 }
 
 /**
