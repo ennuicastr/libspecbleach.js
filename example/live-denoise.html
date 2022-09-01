@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <title>libspecbleach.js live example</title>
+        <meta charset="utf8" />
+    </head>
+    <body>
+        <script type="text/javascript">
+            LibSpecBleach = {base: ".."};
+        </script>
+        <script type="text/javascript" src="../libspecbleach.js"></script>
+        <script type="text/javascript">
+            async function go() {
+                const btn = document.getElementById("go");
+                btn.parentElement.removeChild(btn);
+                const ac = new AudioContext();
+                const mic = await navigator.mediaDevices.getUserMedia({audio: true});
+                const specbleach = await LibSpecBleach.LibSpecBleach();
+
+                let sb = null;
+
+                const sp = ac.createScriptProcessor(1024, 1, 1);
+                sp.onaudioprocess = (ev) => {
+                    const ib = ev.inputBuffer.getChannelData(0);
+                    const ob = ev.outputBuffer.getChannelData(0);
+                    if (!sb || sb.input_buffer.length !== ib.length) {
+                        if (sb)
+                            sb.free();
+                        sb = new specbleach.SpecBleach({
+                            adaptive: true,
+                            block_size: ib.length,
+                            sample_rate: ac.sampleRate
+                        });
+                    }
+                    sb.process(ib, ob);
+                };
+
+                const mss = ac.createMediaStreamSource(mic);
+                mss.connect(sp);
+                sp.connect(ac.destination);
+            }
+        </script>
+
+        <button id="go" onclick="go();">Go</button>
+    </body>
+</html>
