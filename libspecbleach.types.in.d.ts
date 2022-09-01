@@ -42,8 +42,10 @@ export interface LibSpecBleachOO {
     /**
      * Process this block of input
      * @param input  Input to process
+     * @param output  Optional buffer to store the output. If used, this
+     *                function performs no allocation.
      */
-    process: (input: Float32Array) => Float32Array;
+    process: (input: Float32Array, output?: Float32Array) => Float32Array;
 
     /**
      * Set the learn_noise parameter as specified. This is separated so that

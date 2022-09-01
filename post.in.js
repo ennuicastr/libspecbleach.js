@@ -71,7 +71,7 @@ Module.SpecBleach = function(params) {
 }
 
 // Process this data. Data must be a Float32Array of the correct size.
-Module.SpecBleach.prototype.process = function(input) {
+Module.SpecBleach.prototype.process = function(input, output) {
     this.input_buffer.set(input);
     var ret;
     if (this.adaptive) {
@@ -84,7 +84,12 @@ Module.SpecBleach.prototype.process = function(input) {
     }
     if (!ret)
         return null;
-    return this.output_buffer.slice(0);
+    if (output) {
+        output.set(this.output_buffer);
+        return output;
+    } else {
+        return this.output_buffer.slice(0);
+    }
 }
 
 /* Set the learn_noise parameter. This is specifically separated so that you
