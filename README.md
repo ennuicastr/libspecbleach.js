@@ -4,19 +4,24 @@ original libspecbleach!
 
 libspecbleach.js
 ----------------
-Load either `libspecbleach.wasm.js` or `libspecbleach.asm.js`. It exposes a
-global variable `LibSpecBleach`. `LibSpecBleach` is a factory function that
-returns a promise that resolves to an instance of the SpecBleach library.
+Load `libspecbleach.js`. If you're loading from a directory other than `.`,
+then first create a global variable `LibSpecBleach` and set its `base` field
+to the directory you're loading it from. You can also set the `nowasm` and/or
+`nosimd` fields of `LibSpecBleach` to prevent loading these features.
 
-The result of `LibSpecBleach()` can be used exactly like the C `libspecbleach`
-library. Use `specbleach.calloc_f32(size)` to allocate a `Float32Array` in the
-context of the LibSpecBleach instance; it returns an array with the pointer
-(needed for C function calls) and the `Float32Array`. Make sure to use
-`specbleach.free` to free it when you're done. Otherwise, the library is
-identical to the original libspecbleach, except (a) functions that take
-`SpecBleachParameter`s instead have versions suffixed with `_js` that take
-`SpecBleachParameter *`s, and (b) the `specbleach_` prefix is removed from all
-functions, except for `specbleach_free`.
+After loading `libspecbleach.js`, `LibSpecBleach.LibSpecBleach` is a factory
+function that returns a promise that resolves to an instance of the SpecBleach
+library.
+
+The result of `LibSpecBleach.LibSpecBleach()` can be used exactly like the C
+`libspecbleach` library. Use `specbleach.calloc_f32(size)` to allocate a
+`Float32Array` in the context of the LibSpecBleach instance; it returns an
+array with the pointer (needed for C function calls) and the `Float32Array`.
+Make sure to use `specbleach.free` to free it when you're done. Otherwise, the
+library is identical to the original libspecbleach, except (a) functions that
+take `SpecBleachParameter`s instead have versions suffixed with `_js` that
+take `SpecBleachParameter *`s, and (b) the `specbleach_` prefix is removed
+from all functions, except for `specbleach_free`.
 
 Alternatively, libspecbleach.js has an object oriented API.
 

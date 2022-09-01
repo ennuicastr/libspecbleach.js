@@ -37,6 +37,7 @@
 *.hex
 *.asm.js
 *.wasm.js
+*.simd.js
 *.wasm
 
 # Debug files

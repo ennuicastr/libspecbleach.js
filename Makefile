@@ -3,62 +3,79 @@ CFLAGS=-Oz
 
 FFTW3_VERSION=3.3.10
 FFTW3=fftw-$(FFTW3_VERSION)/build/.libs/libfftw3f.a
+FFTW3_SIMD=fftw-$(FFTW3_VERSION)/build-simd/.libs/libfftw3f.a
 
 EFLAGS=\
 	--memory-init-file 0 --post-js post.js \
-	-s "EXPORT_NAME='LibSpecBleach'" \
+	-s "EXPORT_NAME='LibSpecBleachFactory'" \
 	-s "EXPORTED_FUNCTIONS=@exports.json" \
 	-s "EXPORTED_RUNTIME_METHODS=['cwrap']" \
 	-s MODULARIZE=1
 
 CFLAGS=-Oz
 
-OBJS=\
-	bindings.o abindings.o \
-	src/shared/utils/general_utils.o \
-	src/shared/utils/denoise_mixer.o \
-	src/shared/utils/spectral_features.o \
-	src/shared/utils/spectral_utils.o \
-	src/shared/utils/spectral_trailing_buffer.o \
-	src/shared/pre_estimation/absolute_hearing_thresholds.o \
-	src/shared/pre_estimation/masking_estimator.o \
-	src/shared/pre_estimation/noise_scaling_criterias.o \
-	src/shared/pre_estimation/transient_detector.o \
-	src/shared/pre_estimation/spectral_smoother.o \
-	src/shared/post_estimation/spectral_whitening.o \
-	src/shared/post_estimation/postfilter.o \
-	src/shared/noise_estimation/adaptive_noise_estimator.o \
-	src/shared/noise_estimation/noise_estimator.o \
-	src/shared/noise_estimation/noise_profile.o \
-	src/shared/gain_estimation/gain_estimators.o \
-	src/shared/pre_estimation/critical_bands.o \
-	src/shared/stft/fft_transform.o \
-	src/shared/stft/stft_windows.o \
-	src/shared/stft/stft_buffer.o \
-	src/shared/stft/stft_processor.o \
-	src/processors/denoiser/spectral_denoiser.o \
-	src/processors/adaptivedenoiser/adaptive_denoiser.o \
-	src/processors/specbleach_adenoiser.o \
-	src/processors/specbleach_denoiser.o \
+SRC=\
+	bindings.c abindings.c \
+	src/shared/utils/general_utils.c \
+	src/shared/utils/denoise_mixer.c \
+	src/shared/utils/spectral_features.c \
+	src/shared/utils/spectral_utils.c \
+	src/shared/utils/spectral_trailing_buffer.c \
+	src/shared/pre_estimation/absolute_hearing_thresholds.c \
+	src/shared/pre_estimation/masking_estimator.c \
+	src/shared/pre_estimation/noise_scaling_criterias.c \
+	src/shared/pre_estimation/transient_detector.c \
+	src/shared/pre_estimation/spectral_smoother.c \
+	src/shared/post_estimation/spectral_whitening.c \
+	src/shared/post_estimation/postfilter.c \
+	src/shared/noise_estimation/adaptive_noise_estimator.c \
+	src/shared/noise_estimation/noise_estimator.c \
+	src/shared/noise_estimation/noise_profile.c \
+	src/shared/gain_estimation/gain_estimators.c \
+	src/shared/pre_estimation/critical_bands.c \
+	src/shared/stft/fft_transform.c \
+	src/shared/stft/stft_windows.c \
+	src/shared/stft/stft_buffer.c \
+	src/shared/stft/stft_processor.c \
+	src/processors/denoiser/spectral_denoiser.c \
+	src/processors/adaptivedenoiser/adaptive_denoiser.c \
+	src/processors/specbleach_adenoiser.c \
+	src/processors/specbleach_denoiser.c
 
-all: libspecbleach.asm.js libspecbleach.wasm.js \
+OBJS=$(addprefix build/,$(SRC:.c=.o))
+
+OBJS_SIMD=$(addprefix build-simd/,$(SRC:.c=.o))
+
+all: libspecbleach.asm.js libspecbleach.wasm.js libspecbleach.simd.js \
 	libspecbleach.types.d.ts
 
-libspecbleach.asm.js: $(OBJS) post.js
+libspecbleach.asm.js: $(OBJS) $(FFTW3) post.js
 	$(CC) $(CFLAGS) $(EFLAGS) -s WASM=0 \
 		$(OBJS) $(FFTW3) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
 
-libspecbleach.wasm.js: $(OBJS) post.js
+libspecbleach.wasm.js: $(OBJS) $(FFTW3) post.js
 	$(CC) $(CFLAGS) $(EFLAGS) \
 		$(OBJS) $(FFTW3) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
 	chmod a-x libspecbleach.wasm.wasm
 
-%.o: %.c $(FFTW3)
+libspecbleach.simd.js: $(OBJS_SIMD) $(FFTW3_SIMD) post.js
+	$(CC) $(CFLAGS) -msimd128 $(EFLAGS) \
+		$(OBJS_SIMD) $(FFTW3_SIMD) -o $@
+	cat license.js $@ > $@.tmp
+	mv $@.tmp $@
+	chmod a-x libspecbleach.simd.wasm
+
+build/%.o: %.c $(FFTW3)
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -Iinclude -Ifftw-$(FFTW3_VERSION)/api -c $< -o $@
+
+build-simd/%.o: %.c $(FFTW3_SIMD)
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -msimd128 -Iinclude -Ifftw-$(FFTW3_VERSION)/api -c $< -o $@
 
 exports.json: funcs.json apply-funcs.js post.in.js libspecbleach.types.in.d.ts
 	./apply-funcs.js
@@ -79,9 +96,20 @@ $(FFTW3):
 	)
 	cd fftw-$(FFTW3_VERSION)/build ; $(MAKE)
 
+$(FFTW3_SIMD): $(FFTW3)
+	test -e fftw-$(FFTW3_VERSION)/build-simd/Makefile || ( \
+		mkdir -p fftw-$(FFTW3_VERSION)/build-simd ; \
+		cd fftw-$(FFTW3_VERSION)/build-simd ; \
+		emconfigure ../configure --prefix=/urs --enable-float \
+			--enable-generic-simd128 CFLAGS="-Oz -msimd128" \
+	)
+	cd fftw-$(FFTW3_VERSION)/build-simd ; $(MAKE)
+
 halfclean:
-	rm -f libspecbleach.asm.js libspecbleach.wasm.js libspecbleach.wasm.wasm
-	rm -f $(OBJS)
+	rm -f libspecbleach.asm.js \
+		libspecbleach.wasm.js libspecbleach.wasm.wasm \
+		libspecbleach.simd.js libspecbleach.simd.wasm
+	rm -rf build build-simd
 	rm -f exports.json post.js libspecbleach.types.d.ts
 
 clean: halfclean

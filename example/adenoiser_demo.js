@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 const fs = require("fs");
-const LibSpecBleach = require("../libspecbleach.wasm.js");
+const LibSpecBleach = require("../libspecbleach.js");
 
 // This is not a deliberate value. The library handles any amount passed through
 // a circular buffer
@@ -48,7 +48,7 @@ async function main(argc, argv) {
   let input_file_idx = 0;
   const output_file = fs.createWriteStream(output_file_name);
 
-  const specbleach = await LibSpecBleach();
+  const specbleach = await LibSpecBleach.LibSpecBleach();
 
   // Buffers for input and output to be used by the library
   const [input_library_buffer_ptr, input_library_buffer] =
