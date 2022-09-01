@@ -76,6 +76,7 @@
                         scr.src = toLoad;
                         scr.onload = res;
                         scr.onerror = rej;
+                        document.body.appendChild(scr);
                     });
                 }
             }
