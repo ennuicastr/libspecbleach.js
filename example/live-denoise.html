@@ -13,6 +13,7 @@
             async function go() {
                 const btn = document.getElementById("go");
                 btn.parentElement.removeChild(btn);
+                const chk = document.getElementById("specbleach");
                 const ac = new AudioContext();
                 const mic = await navigator.mediaDevices.getUserMedia({audio: true});
                 const specbleach = await LibSpecBleach.LibSpecBleach();
@@ -32,7 +33,10 @@
                             sample_rate: ac.sampleRate
                         });
                     }
-                    sb.process(ib, ob);
+                    if (chk.checked)
+                        sb.process(ib, ob);
+                    else
+                        ob.set(ib);
                 };
 
                 const mss = ac.createMediaStreamSource(mic);
@@ -41,6 +45,7 @@
             }
         </script>
 
+        <input type="checkbox" id="specbleach" checked=true><label for="specbleach">&nbsp;Use noise reduction</label><br/>
         <button id="go" onclick="go();">Go</button>
     </body>
 </html>
