@@ -1,0 +1,31 @@
+{
+  "name": "libspecbleach.js",
+  "version": "0.0.1",
+  "description": "Port of libspecbleach to WebAssembly/JavaScript",
+  "main": "libspecbleach.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ennuicastr/libspecbleach.js.git"
+  },
+  "keywords": [
+    "audio",
+    "noise",
+    "reduction",
+    "noise"
+  ],
+  "author": "Yahweasel",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/ennuicastr/libspecbleach.js/issues"
+  },
+  "homepage": "https://github.com/ennuicastr/libspecbleach.js#readme",
+  "devDependencies": {
+    "minify": "^9.1.0"
+  }
+}

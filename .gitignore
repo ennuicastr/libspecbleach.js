@@ -68,6 +68,9 @@ build/
 exports.json
 libspecbleach.types.d.ts
 post.js
+libspecbleach.js
+node_modules
+package-lock.json
 
 # Prereqs
 fftw*

@@ -46,8 +46,12 @@ OBJS=$(addprefix build/,$(SRC:.c=.o))
 
 OBJS_SIMD=$(addprefix build-simd/,$(SRC:.c=.o))
 
-all: libspecbleach.asm.js libspecbleach.wasm.js libspecbleach.simd.js \
+all: libspecbleach.js \
+	libspecbleach.asm.js libspecbleach.wasm.js libspecbleach.simd.js \
 	libspecbleach.types.d.ts
+
+libspecbleach.js: libspecbleach.in.js node_modules/.bin/minify
+	node_modules/.bin/minify --js < $< > $@
 
 libspecbleach.asm.js: $(OBJS) $(FFTW3) post.js
 	$(CC) $(CFLAGS) $(EFLAGS) -s WASM=0 \
@@ -86,6 +90,9 @@ post.js: exports.json
 libspecbleach.types.d.ts: exports.json
 	touch $@
 
+node_modules/.bin/minify:
+	npm install
+
 $(FFTW3):
 	test -e fftw-$(FFTW3_VERSION).tar.gz || wget http://www.fftw.org/fftw-$(FFTW3_VERSION).tar.gz
 	test -e fftw-$(FFTW3_VERSION)/configure || tar zxf fftw-$(FFTW3_VERSION).tar.gz
@@ -114,3 +121,5 @@ halfclean:
 
 clean: halfclean
 	rm -rf fftw-$(FFTW3_VERSION)
+	rm -rf node_modules
+	rm -f package-lock.json
