@@ -59,7 +59,7 @@ async function main(argc, argv) {
   // Declaration of the library instance. It needs to know the samplerate of the
   // audio
   const lib_instance =
-      specbleach.adaptive_initialize(48000);
+      specbleach.adaptive_initialize(48000, 20);
 
   // Configuration of the denoising parameters. These are hardcoded just for the
   // example

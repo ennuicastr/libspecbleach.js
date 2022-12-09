@@ -32,7 +32,9 @@ B(float, reduction_amount)
 B(float, smoothing_factor)
 B(bool, transient_protection)
 B(float, whitening_factor)
+B(int, noise_scaling_type)
 B(float, noise_rescale)
+B(float, post_filter_threshold)
 #undef A
 
 SpectralBleachParameters *specbleach_malloc_parameters_js() {
@@ -43,6 +45,7 @@ SpectralBleachParameters *specbleach_malloc_parameters_js() {
     // Sane defaults from the example
     ret->reduction_amount = 10;
     ret->noise_rescale = 2;
+    ret->post_filter_threshold = -10;
     return ret;
 }
 

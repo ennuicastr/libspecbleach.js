@@ -26,9 +26,10 @@ Module.SpecBleach = function(params) {
 
     // Allocate the instance
     var sample_rate = this.sample_rate = params.sample_rate || 48000;
+    var frame_size = this.frame_size = params.frame_size || 20;
     var lib_instance = this.lib_instance = adaptive ?
-        Module.adaptive_initialize(sample_rate) :
-        Module.initialize(sample_rate);
+        Module.adaptive_initialize(sample_rate, frame_size) :
+        Module.initialize(sample_rate, frame_size);
 
     // Allocate the parameters
     var parameters = this.parameters = adaptive ?
@@ -42,8 +43,10 @@ Module.SpecBleach = function(params) {
         ["reduction_amount", true],
         ["smoothing_factor", true],
         ["transient_protection", false],
-        ["whitening_factor", false],
-        ["noise_rescale", true]
+        ["whitening_factor", true],
+        ["noise_scaling_type", true],
+        ["noise_rescale", true],
+        ["post_filter_threshold", true]
     ];
     var i;
     for (i = 0; i < parts.length; i++) {

@@ -62,7 +62,7 @@ async function main(argc, argv) {
   // Declaration of the library instance. It needs to know the samplerate of the
   // audio
   const lib_instance =
-      specbleach.initialize(48000);
+      specbleach.initialize(48000, 20);
 
   // NOISE PROFILE LEARN STAGE
 

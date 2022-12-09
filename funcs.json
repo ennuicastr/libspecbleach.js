@@ -1,6 +1,6 @@
 {
     "functions": [
-        ["specbleach_initialize", "number", ["number"]],
+        ["specbleach_initialize", "number", ["number", "number"]],
         ["specbleach_free", "void", ["number"]],
         ["specbleach_malloc_parameters_js", "number", []],
         ["specbleach_load_parameters_js", "number", ["number", "number"]],
@@ -13,7 +13,7 @@
         ["specbleach_noise_profile_available", "number", ["number"]],
         ["specbleach_get_noise_profile_blocks_averaged", "number", ["number"]],
 
-        ["specbleach_adaptive_initialize", "number", ["number"]],
+        ["specbleach_adaptive_initialize", "number", ["number", "number"]],
         ["specbleach_adaptive_free", "void", ["number"]],
         ["specbleach_adaptive_malloc_parameters_js", "number", []],
         ["specbleach_adaptive_load_parameters_js", "number", ["number", "number"]],
