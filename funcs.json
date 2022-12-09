@@ -33,13 +33,18 @@
             "smoothing_factor",
             "transient_protection",
             "whitening_factor",
-            "noise_rescale"
+            "noise_scaling_type",
+            "noise_rescale",
+            "post_filter_threshold"
         ]],
         ["AdaptiveSpectralBleachParameters", [
             "residual_listen",
             "reduction_amount",
             "smoothing_factor",
-            "noise_rescale"
+            "whitening_factor",
+            "noise_scaling_type",
+            "noise_rescale",
+            "post_filter_threshold"
         ]]
     ]
 }
