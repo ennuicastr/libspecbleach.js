@@ -1,5 +1,6 @@
 CC=emcc
 CFLAGS=-Oz
+PREFIX=inst
 
 FFTW3_VERSION=3.3.10
 FFTW3=fftw-$(FFTW3_VERSION)/build/.libs/libfftw3f.a
@@ -46,9 +47,13 @@ OBJS=$(addprefix build/,$(SRC:.c=.o))
 
 OBJS_SIMD=$(addprefix build-simd/,$(SRC:.c=.o))
 
-all: libspecbleach.js \
+EXES=libspecbleach.js \
 	libspecbleach.asm.js libspecbleach.wasm.js libspecbleach.simd.js \
 	libspecbleach.types.d.ts
+
+EXE_EXTRAS=libspecbleach.wasm.wasm libspecbleach.simd.wasm
+
+all: $(EXES)
 
 libspecbleach.js: libspecbleach.in.js node_modules/.bin/minify
 	node_modules/.bin/minify --js < $< > $@
@@ -111,6 +116,12 @@ $(FFTW3_SIMD): $(FFTW3)
 			--enable-generic-simd128 CFLAGS="-Oz -msimd128" \
 	)
 	cd fftw-$(FFTW3_VERSION)/build-simd ; $(MAKE)
+
+install:
+	mkdir -p $(PREFIX)
+	for i in $(EXES) $(EXE_EXTRAS); do \
+		install -C -m 0622 $$i $(PREFIX)/$$i; \
+	done
 
 halfclean:
 	rm -f libspecbleach.asm.js \
