@@ -1,8 +1,9 @@
 {
-  "name": "libspecbleach.js",
-  "version": "0.0.1",
+  "name": "@ennuicastr/libspecbleach.js",
+  "version": "0.1.6",
   "description": "Port of libspecbleach to WebAssembly/JavaScript",
-  "main": "libspecbleach.js",
+  "main": "dist/libspecbleach-0.1.6.js",
+  "types": "dist/libspecbleach.types.d.ts",
   "directories": {
     "example": "example"
   },
@@ -15,7 +16,7 @@
   },
   "keywords": [
     "audio",
-    "noise",
+    "noise reduction",
     "reduction",
     "noise"
   ],

@@ -56,7 +56,7 @@
         return Promise.all([]).then(function() {
             // Load it
             if (typeof LibSpecBleachFactory === "undefined") {
-                var toLoad = base + "/libspecbleach." + target + ".js";
+                var toLoad = base + "/libspecbleach-@VER." + target + ".js";
                 if (nodejs) {
                     LibSpecBleachFactory = require(toLoad);
                 } else {

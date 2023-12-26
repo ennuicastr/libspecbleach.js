@@ -1,6 +1,9 @@
 CC=emcc
 CFLAGS=-Oz
 
+# Attempt to follow libspecbleach upstream version numbers
+LIBSPECBLEACHJS_VERSION=0.1.6
+
 FFTW3_VERSION=3.3.10
 FFTW3=build/fftw-$(FFTW3_VERSION)/build/.libs/libfftw3f.a
 FFTW3_SIMD=build/fftw-$(FFTW3_VERSION)/build-simd/.libs/libfftw3f.a
@@ -46,37 +49,43 @@ OBJS=$(addprefix build/build-wasm/,$(SRC:.c=.o))
 
 OBJS_SIMD=$(addprefix build/build-simd/,$(SRC:.c=.o))
 
-all: dist/libspecbleach.js dist/libspecbleach.asm.js dist/libspecbleach.wasm.js \
-	dist/libspecbleach.simd.js dist/libspecbleach.types.d.ts
+all: dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).js \
+	dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).asm.js \
+	dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).wasm.js \
+	dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).simd.js \
+	dist/libspecbleach.types.d.ts
 
 all: $(EXES)
 
-dist/libspecbleach.js: libspecbleach.in.js node_modules/.bin/uglifyjs
+dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).js: libspecbleach.in.js \
+		node_modules/.bin/uglifyjs
 	mkdir -p dist
-	node_modules/.bin/uglifyjs -m < $< > $@
+	sed 's/@VER/$(LIBSPECBLEACHJS_VERSION)/g' $< | \
+		node_modules/.bin/uglifyjs -m > $@
 
-dist/libspecbleach.asm.js: $(OBJS) $(FFTW3) post.js
+dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).asm.js: $(OBJS) $(FFTW3) post.js
 	mkdir -p dist
 	$(CC) $(CFLAGS) $(EFLAGS) -s WASM=0 \
 		$(OBJS) $(FFTW3) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
 
-dist/libspecbleach.wasm.js: $(OBJS) $(FFTW3) post.js
+dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).wasm.js: $(OBJS) $(FFTW3) post.js
 	mkdir -p dist
 	$(CC) $(CFLAGS) $(EFLAGS) \
 		$(OBJS) $(FFTW3) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
-	chmod a-x dist/libspecbleach.wasm.wasm
+	chmod a-x dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).wasm.wasm
 
-dist/libspecbleach.simd.js: $(OBJS_SIMD) $(FFTW3_SIMD) post.js
+dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).simd.js: $(OBJS_SIMD) \
+		$(FFTW3_SIMD) post.js
 	mkdir -p dist
 	$(CC) $(CFLAGS) -msimd128 $(EFLAGS) \
 		$(OBJS_SIMD) $(FFTW3_SIMD) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
-	chmod a-x dist/libspecbleach.simd.wasm
+	chmod a-x dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).simd.wasm
 
 build/build-wasm/%.o: %.c $(FFTW3)
 	mkdir -p $(dir $@)

@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 const fs = require("fs");
-const LibSpecBleach = require("../dist/libspecbleach.js");
+const LibSpecBleach = require("../dist/libspecbleach-0.1.6.js");
 
 // This is not a deliberate value. The library handles any amount passed through
 // a circular buffer
