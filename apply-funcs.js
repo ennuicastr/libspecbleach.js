@@ -83,7 +83,7 @@ function shortNm(f) {
 
     outp = inp.replace("@FUNCS", outp);
 
-    fs.writeFileSync("post.js", outp);
+    fs.writeFileSync("build/post.js", outp);
 })();
 
 // libspecbleach.types.d.ts
@@ -156,5 +156,5 @@ function shortNm(f) {
         outp.push("_" + decl);
     });
 
-    fs.writeFileSync("exports.json", s(outp));
+    fs.writeFileSync("build/exports.json", s(outp));
 })();

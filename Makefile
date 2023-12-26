@@ -9,9 +9,9 @@ FFTW3=build/fftw-$(FFTW3_VERSION)/build/.libs/libfftw3f.a
 FFTW3_SIMD=build/fftw-$(FFTW3_VERSION)/build-simd/.libs/libfftw3f.a
 
 EFLAGS=\
-	--memory-init-file 0 --post-js post.js \
+	--memory-init-file 0 --post-js build/post.js \
 	-s "EXPORT_NAME='LibSpecBleachFactory'" \
-	-s "EXPORTED_FUNCTIONS=@exports.json" \
+	-s "EXPORTED_FUNCTIONS=@build/exports.json" \
 	-s "EXPORTED_RUNTIME_METHODS=['cwrap']" \
 	-s MODULARIZE=1
 
@@ -63,14 +63,16 @@ dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).js: libspecbleach.in.js \
 	sed 's/@VER/$(LIBSPECBLEACHJS_VERSION)/g' $< | \
 		node_modules/.bin/uglifyjs -m > $@
 
-dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).asm.js: $(OBJS) $(FFTW3) post.js
+dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).asm.js: $(OBJS) $(FFTW3) \
+		build/exports.json
 	mkdir -p dist
 	$(CC) $(CFLAGS) $(EFLAGS) -s WASM=0 \
 		$(OBJS) $(FFTW3) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
 
-dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).wasm.js: $(OBJS) $(FFTW3) post.js
+dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).wasm.js: $(OBJS) $(FFTW3) \
+		build/exports.json
 	mkdir -p dist
 	$(CC) $(CFLAGS) $(EFLAGS) \
 		$(OBJS) $(FFTW3) -o $@
@@ -79,7 +81,7 @@ dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).wasm.js: $(OBJS) $(FFTW3) post.js
 	chmod a-x dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).wasm.wasm
 
 dist/libspecbleach-$(LIBSPECBLEACHJS_VERSION).simd.js: $(OBJS_SIMD) \
-		$(FFTW3_SIMD) post.js
+		$(FFTW3_SIMD) build/exports.json
 	mkdir -p dist
 	$(CC) $(CFLAGS) -msimd128 $(EFLAGS) \
 		$(OBJS_SIMD) $(FFTW3_SIMD) -o $@
@@ -95,14 +97,15 @@ build/build-simd/%.o: %.c $(FFTW3_SIMD)
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -msimd128 -Iinclude -Ibuild/fftw-$(FFTW3_VERSION)/api -c $< -o $@
 
-exports.json: funcs.json apply-funcs.js post.in.js libspecbleach.types.in.d.ts
+build/exports.json: funcs.json apply-funcs.js post.in.js libspecbleach.types.in.d.ts
+	mkdir -p build
 	mkdir -p dist
 	./apply-funcs.js
 
-post.js: exports.json
+build/post.js: build/exports.json
 	touch $@
 
-dist/libspecbleach.types.d.ts: exports.json
+dist/libspecbleach.types.d.ts: build/exports.json
 	touch $@
 
 node_modules/.bin/uglifyjs:
@@ -136,6 +139,7 @@ $(FFTW3_SIMD): $(FFTW3)
 
 clean:
 	rm -rf dist build/build-wasm build/build-simd build/fftw-$(FFTW3_VERSION)
+	rm -f build/exports.json build/post.js
 
 distclean: clean
 	rm -rf build
