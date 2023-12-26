@@ -1,0 +1,14 @@
+.*
+abindings.c
+apply-funcs.js
+bindings.c
+build
+example/meson.build
+example/*.c
+funcs.json
+include
+libspecbleach.in.js
+libspecbleach.types.in.d.ts
+Makefile
+post.in.js
+src
