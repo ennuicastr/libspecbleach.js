@@ -1,13 +1,20 @@
 NOTE: This is a port of libspecbleach to WebAssembly/JavaScript, not the
 original libspecbleach!
 
+NOTE 2: This package is under the GNU GENERAL PUBLIC LICENSE. It is *not* under
+the GNU LESSER General Public License. If you want a version under a more
+permissive license, you will have to negotiate with the authors of
+[FFTW](https://www.fftw.org/) and/or
+[libspecbleach](https://github.com/lucianodato/libspecbleach). This is just a
+port!
+
 
 libspecbleach.js
 ----------------
-Load `libspecbleach.js`. If you're loading from a directory other than `.`,
-then first create a global variable `LibSpecBleach` and set its `base` field
-to the directory you're loading it from. You can also set the `nowasm` and/or
-`nosimd` fields of `LibSpecBleach` to prevent loading these features.
+Load `libspecbleach-<version>.js`. If you're loading from a directory other than
+`.`, then first create a global variable `LibSpecBleach` and set its `base`
+field to the directory you're loading it from. You can also set the `nowasm`
+and/or `nosimd` fields of `LibSpecBleach` to prevent loading these features.
 
 After loading `libspecbleach.js`, `LibSpecBleach.LibSpecBleach` is a factory
 function that returns a promise that resolves to an instance of the SpecBleach
