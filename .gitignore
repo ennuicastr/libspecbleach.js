@@ -65,12 +65,10 @@ build/
 .vscode/
 
 # Emscripten build
+.*
+dist/
+build/
+node_modules/
 exports.json
-libspecbleach.types.d.ts
 post.js
-libspecbleach.js
-node_modules
 package-lock.json
-
-# Prereqs
-fftw*
