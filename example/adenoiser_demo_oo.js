@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 const fs = require("fs");
-const LibSpecBleach = require("../libspecbleach.js");
+const LibSpecBleach = require("../dist/libspecbleach.js");
 
 // This is not a deliberate value. The library handles any amount passed through
 // a circular buffer
@@ -37,7 +37,7 @@ const BLOCK_SIZE = 512;
 
 async function main(argc, argv) {
   if (argc != 3) {
-    console.error("usage: adenoiser_demo.js <noisy input> <denoised output>");
+    console.error("usage: adenoiser_demo_oo.js <noisy input> <denoised output>");
     process.exit(1);
   }
 

@@ -1,10 +1,9 @@
 CC=emcc
 CFLAGS=-Oz
-PREFIX=inst
 
 FFTW3_VERSION=3.3.10
-FFTW3=fftw-$(FFTW3_VERSION)/build/.libs/libfftw3f.a
-FFTW3_SIMD=fftw-$(FFTW3_VERSION)/build-simd/.libs/libfftw3f.a
+FFTW3=build/fftw-$(FFTW3_VERSION)/build/.libs/libfftw3f.a
+FFTW3_SIMD=build/fftw-$(FFTW3_VERSION)/build-simd/.libs/libfftw3f.a
 
 EFLAGS=\
 	--memory-init-file 0 --post-js post.js \
@@ -43,94 +42,93 @@ SRC=\
 	src/processors/specbleach_adenoiser.c \
 	src/processors/specbleach_denoiser.c
 
-OBJS=$(addprefix build/,$(SRC:.c=.o))
+OBJS=$(addprefix build/build-wasm/,$(SRC:.c=.o))
 
-OBJS_SIMD=$(addprefix build-simd/,$(SRC:.c=.o))
+OBJS_SIMD=$(addprefix build/build-simd/,$(SRC:.c=.o))
 
-EXES=libspecbleach.js \
-	libspecbleach.asm.js libspecbleach.wasm.js libspecbleach.simd.js \
-	libspecbleach.types.d.ts
-
-EXE_EXTRAS=libspecbleach.wasm.wasm libspecbleach.simd.wasm
+all: dist/libspecbleach.js dist/libspecbleach.asm.js dist/libspecbleach.wasm.js \
+	dist/libspecbleach.simd.js dist/libspecbleach.types.d.ts
 
 all: $(EXES)
 
-libspecbleach.js: libspecbleach.in.js node_modules/.bin/minify
-	node_modules/.bin/minify --js < $< > $@
+dist/libspecbleach.js: libspecbleach.in.js node_modules/.bin/uglifyjs
+	mkdir -p dist
+	node_modules/.bin/uglifyjs -m < $< > $@
 
-libspecbleach.asm.js: $(OBJS) $(FFTW3) post.js
+dist/libspecbleach.asm.js: $(OBJS) $(FFTW3) post.js
+	mkdir -p dist
 	$(CC) $(CFLAGS) $(EFLAGS) -s WASM=0 \
 		$(OBJS) $(FFTW3) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
 
-libspecbleach.wasm.js: $(OBJS) $(FFTW3) post.js
+dist/libspecbleach.wasm.js: $(OBJS) $(FFTW3) post.js
+	mkdir -p dist
 	$(CC) $(CFLAGS) $(EFLAGS) \
 		$(OBJS) $(FFTW3) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
-	chmod a-x libspecbleach.wasm.wasm
+	chmod a-x dist/libspecbleach.wasm.wasm
 
-libspecbleach.simd.js: $(OBJS_SIMD) $(FFTW3_SIMD) post.js
+dist/libspecbleach.simd.js: $(OBJS_SIMD) $(FFTW3_SIMD) post.js
+	mkdir -p dist
 	$(CC) $(CFLAGS) -msimd128 $(EFLAGS) \
 		$(OBJS_SIMD) $(FFTW3_SIMD) -o $@
 	cat license.js $@ > $@.tmp
 	mv $@.tmp $@
-	chmod a-x libspecbleach.simd.wasm
+	chmod a-x dist/libspecbleach.simd.wasm
 
-build/%.o: %.c $(FFTW3)
+build/build-wasm/%.o: %.c $(FFTW3)
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -Iinclude -Ifftw-$(FFTW3_VERSION)/api -c $< -o $@
+	$(CC) $(CFLAGS) -Iinclude -Ibuild/fftw-$(FFTW3_VERSION)/api -c $< -o $@
 
-build-simd/%.o: %.c $(FFTW3_SIMD)
+build/build-simd/%.o: %.c $(FFTW3_SIMD)
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -msimd128 -Iinclude -Ifftw-$(FFTW3_VERSION)/api -c $< -o $@
+	$(CC) $(CFLAGS) -msimd128 -Iinclude -Ibuild/fftw-$(FFTW3_VERSION)/api -c $< -o $@
 
 exports.json: funcs.json apply-funcs.js post.in.js libspecbleach.types.in.d.ts
+	mkdir -p dist
 	./apply-funcs.js
 
 post.js: exports.json
 	touch $@
 
-libspecbleach.types.d.ts: exports.json
+dist/libspecbleach.types.d.ts: exports.json
 	touch $@
 
-node_modules/.bin/minify:
+node_modules/.bin/uglifyjs:
 	npm install
 
 $(FFTW3):
-	test -e fftw-$(FFTW3_VERSION).tar.gz || wget http://www.fftw.org/fftw-$(FFTW3_VERSION).tar.gz
-	test -e fftw-$(FFTW3_VERSION)/configure || tar zxf fftw-$(FFTW3_VERSION).tar.gz
-	test -e fftw-$(FFTW3_VERSION)/build/Makefile || ( \
-		mkdir -p fftw-$(FFTW3_VERSION)/build ; \
-		cd fftw-$(FFTW3_VERSION)/build ; \
+	test -e build/fftw-$(FFTW3_VERSION).tar.gz || ( \
+		mkdir -p build ; \
+		curl http://www.fftw.org/fftw-$(FFTW3_VERSION).tar.gz \
+			-o build/fftw-$(FFTW3_VERSION).tar.gz \
+	)
+	test -e build/fftw-$(FFTW3_VERSION)/configure || ( \
+		cd build ; \
+		tar zxf fftw-$(FFTW3_VERSION).tar.gz \
+	)
+	test -e build/fftw-$(FFTW3_VERSION)/build/Makefile || ( \
+		mkdir -p build/fftw-$(FFTW3_VERSION)/build ; \
+		cd build/fftw-$(FFTW3_VERSION)/build ; \
 		emconfigure ../configure --prefix=/usr --enable-float CFLAGS=-Oz \
 	)
-	cd fftw-$(FFTW3_VERSION)/build ; $(MAKE)
+	cd build/fftw-$(FFTW3_VERSION)/build && $(MAKE)
 
 $(FFTW3_SIMD): $(FFTW3)
-	test -e fftw-$(FFTW3_VERSION)/build-simd/Makefile || ( \
-		mkdir -p fftw-$(FFTW3_VERSION)/build-simd ; \
-		cd fftw-$(FFTW3_VERSION)/build-simd ; \
-		emconfigure ../configure --prefix=/urs --enable-float \
+	test -e build/fftw-$(FFTW3_VERSION)/build-simd/Makefile || ( \
+		mkdir -p build/fftw-$(FFTW3_VERSION)/build-simd ; \
+		cd build/fftw-$(FFTW3_VERSION)/build-simd ; \
+		emconfigure ../configure --prefix=/usr --enable-float \
 			--enable-generic-simd128 CFLAGS="-Oz -msimd128" \
 	)
-	cd fftw-$(FFTW3_VERSION)/build-simd ; $(MAKE)
+	cd build/fftw-$(FFTW3_VERSION)/build-simd && $(MAKE)
 
-install:
-	mkdir -p $(PREFIX)
-	for i in $(EXES) $(EXE_EXTRAS); do \
-		install -C -m 0622 $$i $(PREFIX)/$$i; \
-	done
+clean:
+	rm -rf dist build/build-wasm build/build-simd build/fftw-$(FFTW3_VERSION)
 
-halfclean:
-	rm -f libspecbleach.asm.js \
-		libspecbleach.wasm.js libspecbleach.wasm.wasm \
-		libspecbleach.simd.js libspecbleach.simd.wasm
-	rm -rf build build-simd
-	rm -f exports.json post.js libspecbleach.types.d.ts
-
-clean: halfclean
-	rm -rf fftw-$(FFTW3_VERSION)
+distclean: clean
+	rm -rf build
 	rm -rf node_modules
 	rm -f package-lock.json

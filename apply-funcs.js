@@ -146,7 +146,7 @@ function shortNm(f) {
     }
     outp = inp.replace("@DECLS", outp);
 
-    fs.writeFileSync("libspecbleach.types.d.ts", outp);
+    fs.writeFileSync("dist/libspecbleach.types.d.ts", outp);
 })();
 
 // exports.json

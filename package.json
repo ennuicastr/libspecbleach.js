@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/ennuicastr/libspecbleach.js#readme",
   "devDependencies": {
-    "minify": "^9.1.0"
+    "uglify-js": "^3.14.3"
   }
 }

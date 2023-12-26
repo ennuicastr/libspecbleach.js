@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Yahweasel
+ * Copyright (C) 2019-2023 Yahweasel
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted.
@@ -22,16 +22,6 @@
             var module = new WebAssembly.Module(new Uint8Array(module));
             if (module instanceof WebAssembly.Module)
                 return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
-        } catch (e) {}
-        return false;
-    }
-
-    function isThreadingSupported() {
-        try {
-            var mem = new WebAssembly.Memory({initial: 1, maximum: 1, shared: true});
-            if (!(mem.buffer instanceof SharedArrayBuffer))
-                return false;
-            return true;
         } catch (e) {}
         return false;
     }
