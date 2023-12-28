@@ -1,8 +1,9 @@
 {
   "name": "@ennuicastr/libspecbleach.js",
-  "version": "0.1.6",
+  "//version": "When updating version, update it here (version, main), and in the Makefile. Note that this -js1 name is because no 0.1.7 has been released, but we're currently using a revision past 0.1.6. Once a 0.1.7 has been released, this should just be 0.1.7.",
+  "version": "0.1.7-js1",
   "description": "Port of libspecbleach to WebAssembly/JavaScript",
-  "main": "dist/libspecbleach-0.1.6.js",
+  "main": "dist/libspecbleach-0.1.7-js1.js",
   "types": "dist/libspecbleach.types.d.ts",
   "directories": {
     "example": "example"
