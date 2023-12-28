@@ -59,6 +59,8 @@
                 var toLoad = base + "/libspecbleach-@VER." + target + ".js";
                 if (nodejs) {
                     LibSpecBleachFactory = require(toLoad);
+                } else if (typeof importScripts !== "undefined") {
+                    importScripts(toLoad);
                 } else {
                     return new Promise(function(res, rej) {
                         var scr = document.createElement("script");
