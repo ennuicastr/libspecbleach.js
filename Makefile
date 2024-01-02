@@ -2,7 +2,7 @@ CC=emcc
 CFLAGS=-Oz
 
 # Attempt to follow libspecbleach upstream version numbers
-LIBSPECBLEACHJS_VERSION=0.1.7-js1
+LIBSPECBLEACHJS_VERSION=0.1.7-js2
 
 FFTW3_VERSION=3.3.10
 FFTW3=build/fftw-$(FFTW3_VERSION)/build/.libs/libfftw3f.a
